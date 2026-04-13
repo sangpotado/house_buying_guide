@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First-Time Home Buyer's Interactive Guide • CA vs CO</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --tw-color-stone-50: #fafaf9;
+            --tw-color-stone-100: #f5f5f4;
+            --tw-color-stone-200: #e7e5e4;
+            --tw-color-stone-700: #44403c;
+            --tw-color-stone-800: #292524;
+            --tw-color-stone-900: #1c1917;
+            --tw-color-teal-600: #0d9488;
+            --tw-color-teal-700: #0f766e;
+        }
+        
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        
+        .nav-btn.active-nav {
+            color: #0f766e;
+            border-bottom: 3px solid #0f766e;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 340px;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        
+        .tab-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .term-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(15 118 110 / 0.1);
+        }
+        
+        .checkbox-item {
+            transition: background-color 0.2s;
+        }
+        .checkbox-item:hover {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-x-3">
+                    <span class="text-3xl">🏠</span>
+                    <div>
+                        <span class="font-semibold text-2xl tracking-tight text-stone-900">HomeBuyer</span>
+                        <span class="text-teal-700 font-semibold text-2xl tracking-tight">HQ</span>
+                    </div>
+                    <span class="text-xs font-medium px-2.5 py-px bg-teal-100 text-teal-700 rounded-3xl">CA • CO Edition</span>
+                </div>
+                
+                <nav class="hidden md:flex items-center gap-x-8 text-sm font-medium">
+                    <button onclick="switchTab('intro')" class="nav-btn active-nav">Overview</button>
+                    <button onclick="switchTab('terms')" class="nav-btn">Terms + Housing</button>
+                    <button onclick="switchTab('finance')" class="nav-btn">Budget Calculator</button>
+                    <button onclick="switchTab('process')" class="nav-btn">CA vs CO Process</button>
+                    <button onclick="switchTab('inspection')" class="nav-btn">Inspection Guide</button>
+                </nav>
+            </div>
+        </div>
+        
+        <nav class="md:hidden flex overflow-x-auto border-t border-stone-200 bg-white px-4 py-3 gap-x-6 text-sm font-medium">
+            <button onclick="switchTab('intro')" class="nav-btn active-nav">Overview</button>
+            <button onclick="switchTab('terms')" class="nav-btn">Terms</button>
+            <button onclick="switchTab('finance')" class="nav-btn">Budget</button>
+            <button onclick="switchTab('process')" class="nav-btn">Process</button>
+            <button onclick="switchTab('inspection')" class="nav-btn">Inspect</button>
+        </nav>
+    </header>
+
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <section id="intro" class="tab-content active">
+            <div class="bg-white rounded-3xl shadow-sm p-8 md:p-12 border border-stone-100 max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-stone-900 mb-6">Your First Home — Made Clear</h1>
+                <p class="text-lg text-stone-600 max-w-lg mx-auto mb-10">Buying a house is one of the biggest decisions you'll make. This guide walks you through the jargon, the numbers, the chronological state-by-state processes (CA vs CO), and an instructional inspection guide — all in one interactive dashboard.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+                    <div onclick="switchTab('terms')" class="bg-stone-50 hover:bg-teal-50 border border-stone-100 hover:border-teal-200 rounded-2xl p-6 cursor-pointer transition-all group">
+                        <div class="text-4xl mb-4">📖</div>
+                        <h3 class="font-semibold text-lg mb-1 group-hover:text-teal-700">Core Terms</h3>
+                        <p class="text-sm text-stone-500">Expanded with pros, cons & examples</p>
+                    </div>
+                    <div onclick="switchTab('finance')" class="bg-stone-50 hover:bg-teal-50 border border-stone-100 hover:border-teal-200 rounded-2xl p-6 cursor-pointer transition-all group">
+                        <div class="text-4xl mb-4">📈</div>
+                        <h3 class="font-semibold text-lg mb-1 group-hover:text-teal-700">Run the Numbers</h3>
+                        <p class="text-sm text-stone-500">Live calculator + rate sensitivity</p>
+                    </div>
+                    <div onclick="switchTab('process')" class="bg-stone-50 hover:bg-teal-50 border border-stone-100 hover:border-teal-200 rounded-2xl p-6 cursor-pointer transition-all group">
+                        <div class="text-4xl mb-4">🗺️</div>
+                        <h3 class="font-semibold text-lg mb-1 group-hover:text-teal-700">CA vs CO</h3>
+                        <p class="text-sm text-stone-500">Chronological steps & state laws</p>
+                    </div>
+                    <div onclick="switchTab('inspection')" class="bg-stone-50 hover:bg-teal-50 border border-stone-100 hover:border-teal-200 rounded-2xl p-6 cursor-pointer transition-all group">
+                        <div class="text-4xl mb-4">🔍</div>
+                        <h3 class="font-semibold text-lg mb-1 group-hover:text-teal-700">Inspection Guide</h3>
+                        <p class="text-sm text-stone-500">Actionable "how-to" checklist</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="terms" class="tab-content">
+            <h2 class="text-3xl font-semibold tracking-tight mb-2">1. Fundamental Real Estate Terms</h2>
+            <p class="text-stone-500 mb-8">Expanded definitions with examples, pros/cons, and practical thresholds.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="terms-grid"></div>
+
+            <div class="mt-12">
+                <h3 class="text-2xl font-semibold tracking-tight mb-4">Housing Type Comparison</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="housing-grid"></div>
+            </div>
+        </section>
+
+        <section id="finance" class="tab-content">
+            <h2 class="text-3xl font-semibold tracking-tight mb-2">2. Financial Budgeting & Payment Visualizer</h2>
+            <p class="text-stone-500 mb-8">Adjust the inputs below. Charts update live. Uses 30-year fixed conventional loan unless changed.</p>
+            
+            <div class="grid lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 bg-white rounded-3xl shadow-sm border border-stone-200 p-8">
+                    <h3 class="font-semibold text-xl mb-6">Loan Inputs</h3>
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1.5">
+                                <label class="font-medium text-stone-700">Purchase Price</label>
+                                <span id="priceDisplay" class="font-mono font-semibold">$500,000</span>
+                            </div>
+                            <input id="price" type="range" min="200000" max="1200000" step="10000" value="500000" class="w-full accent-teal-700" oninput="updatePriceLabel(); calculate()">
+                            <input id="priceInput" type="number" value="500000" class="mt-2 w-full text-right font-mono text-3xl font-semibold border border-transparent focus:border-teal-200 rounded-2xl px-4 py-3" oninput="syncPrice(); calculate()">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Down Payment %</label>
+                                <input id="downPct" type="range" min="3" max="50" value="20" class="w-full accent-teal-700" oninput="calculate()">
+                                <div class="flex justify-between text-xs text-stone-500 mt-1">
+                                    <span>3%</span><span id="downDisplay" class="font-semibold">20%</span><span>50%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Interest Rate %</label>
+                                <input id="rate" type="number" step="0.01" value="6.5" class="w-full text-3xl font-semibold border border-stone-200 rounded-2xl px-4 py-3" oninput="calculate()">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Loan Term</label>
+                                <select id="term" onchange="calculate()" class="w-full border border-stone-200 rounded-2xl px-4 py-3 text-lg">
+                                    <option value="15">15 years</option>
+                                    <option value="30" selected>30 years (standard)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1" title="Note: CO uses Mill Levy × Assessed Value. This is an average estimate.">Annual Property Tax % ℹ️</label>
+                                <input id="taxRate" type="number" step="0.01" value="0.85" class="w-full text-3xl font-semibold border border-stone-200 rounded-2xl px-4 py-3" oninput="calculate()">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">Annual Home Insurance</label>
+                                <div class="flex border border-stone-200 rounded-2xl px-4 items-center">
+                                    <span class="text-stone-400">$</span>
+                                    <input id="insurance" type="number" value="1800" class="flex-1 px-3 py-3 bg-transparent text-3xl font-semibold outline-none" oninput="calculate()">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-stone-700 mb-1">HOA (Monthly)</label>
+                                <div class="flex border border-stone-200 rounded-2xl px-4 items-center">
+                                    <span class="text-stone-400">$</span>
+                                    <input id="hoa" type="number" value="250" class="flex-1 px-3 py-3 bg-transparent text-3xl font-semibold outline-none" oninput="calculate()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-stone-700 mb-1">Annual Maintenance Fund (Estimated 1%)</label>
+                            <div class="flex border border-stone-200 rounded-2xl px-4 items-center bg-stone-50">
+                                <span class="text-stone-400">$</span>
+                                <input id="maintenance" type="number" value="5000" class="flex-1 px-3 py-3 bg-transparent text-2xl font-semibold outline-none text-stone-600" oninput="calculate()">
+                            </div>
+                            <p class="text-xs text-stone-500 mt-1">Rule of thumb: Save 1% of home value annually for repairs.</p>
+                        </div>
+                        
+                        <div class="bg-teal-50 rounded-2xl p-6 text-sm">
+                            <div class="flex justify-between mb-2"><span class="text-stone-600">Loan amount</span><span id="loanAmount" class="font-mono font-semibold">$400,000</span></div>
+                            <div class="flex justify-between mb-2"><span class="text-stone-600">Monthly P&I only</span><span id="monthlyPI" class="font-mono font-semibold">$2,528</span></div>
+                            <div class="flex justify-between border-t border-teal-200 pt-2"><span class="font-medium">Est. total monthly (PITI + HOA + Maint.)</span><span id="totalMonthly" class="text-2xl font-semibold text-teal-700">$3,845</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-7 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6">
+                            <h4 class="font-medium mb-4 text-center">Monthly Payment Breakdown</h4>
+                            <div class="chart-container">
+                                <canvas id="pitiChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6">
+                            <h4 class="font-medium mb-4 text-center">Interest Rate Sensitivity</h4>
+                            <p class="text-xs text-stone-500 text-center mb-2">How your P&I changes based on prevailing market rates.</p>
+                            <div class="chart-container">
+                                <canvas id="rateChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6">
+                            <h4 class="font-medium mb-4 text-center">Remaining Loan Balance Over Time</h4>
+                            <div class="chart-container">
+                                <canvas id="balanceChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6">
+                            <h4 class="font-medium mb-4 text-center">Amortization (Interest vs Equity)</h4>
+                            <div class="chart-container">
+                                <canvas id="amortChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6 md:col-span-2">
+                            <h4 class="font-medium mb-4 text-center">Cumulative Principal vs Interest Paid</h4>
+                            <p class="text-xs text-stone-500 text-center mb-4">Watch the crossover point where your equity finally surpasses the amount of interest paid.</p>
+                            <div class="chart-container"><canvas id="cumulativeChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="process" class="tab-content">
+            <h2 class="text-3xl font-semibold tracking-tight mb-2">3. The Step-by-Step Process: CA vs Colorado</h2>
+            <p class="text-stone-500 mb-8">Follow the chronological steps of a real estate transaction and see how state laws shape each phase.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden">
+                    <div class="bg-stone-900 text-white px-8 py-6">
+                        <div class="flex items-baseline gap-x-3">
+                            <span class="text-4xl">🌴</span>
+                            <div>
+                                <h3 class="font-semibold text-2xl">California</h3>
+                                <p class="text-teal-300 text-sm">Escrow State • Prop 13 Taxes • Dry Funding</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-8 text-sm">
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-teal-100 text-teal-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 1</div>
+                            <div>
+                                <strong>Offer Accepted & Escrow Opens</strong><br>
+                                You sign the standard <strong>C.A.R. RPA</strong> (Residential Purchase Agreement). Earnest money (usually 1-3%) is deposited into an independent <strong>Escrow Company</strong>, which acts as a neutral third party to manage funds and docs.
+                            </div>
+                        </div>
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-teal-100 text-teal-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 2</div>
+                            <div>
+                                <strong>Review Disclosures & Taxes</strong><br>
+                                The seller provides a <strong>TDS</strong> (Transfer Disclosure Statement) listing known defects and an <strong>NHD</strong> (Natural Hazard Disclosure) for fire/earthquake zones. 
+                                <br><span class="text-teal-700 font-medium block mt-1">Tax Law (Prop 13):</span> Property taxes are calculated on your purchase price and capped from increasing more than 2% per year.
+                            </div>
+                        </div>
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-teal-100 text-teal-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 3</div>
+                            <div>
+                                <strong>Inspections & Contingency Removal</strong><br>
+                                You have 17 days to do inspections (WDO/Termite is standard) and 21 days for loan approval. You must actively sign a "Contingency Removal" form to proceed. <em>Note: In highly competitive CA markets, buyers often waive these contingencies upfront to win the bid.</em>
+                            </div>
+                        </div>
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-teal-100 text-teal-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 4</div>
+                            <div>
+                                <strong>Closing (Dry Funding)</strong><br>
+                                CA uses "Dry Funding." You will sign loan documents with a notary 1-3 days <em>before</em> closing. The lender reviews them and sends funds later. You only get the keys once the deed is physically recorded at the county clerk's office.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden">
+                    <div class="bg-teal-700 text-white px-8 py-6">
+                        <div class="flex items-baseline gap-x-3">
+                            <span class="text-4xl">🏔️</span>
+                            <div>
+                                <h3 class="font-semibold text-2xl">Colorado</h3>
+                                <p class="text-teal-100 text-sm">Title State • Market Taxes • Wet Funding</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-8 text-sm">
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-stone-100 text-stone-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 1</div>
+                            <div>
+                                <strong>Offer Accepted & Title Opens</strong><br>
+                                You use the state-mandated <strong>CBS1</strong> contract. Instead of escrow, a <strong>Title Company</strong> handles both the title work and holds the earnest money.
+                            </div>
+                        </div>
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-stone-100 text-stone-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 2</div>
+                            <div>
+                                <strong>Review Disclosures & Taxes</strong><br>
+                                Seller provides disclosures, specifically a <strong>Source of Water Addendum</strong> (crucial in CO) and a Methamphetamine disclosure.
+                                <br><span class="text-rose-600 font-medium block mt-1">Tax Law (Biennial Reassessment):</span> CO reassesses property values every two years based on market rates (Assessed Value × Local Mill Levy). If the market booms, taxes can jump significantly.
+                            </div>
+                        </div>
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-stone-100 text-stone-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 3</div>
+                            <div>
+                                <strong>Inspections & Strict Deadlines</strong><br>
+                                CO contracts have "drop-dead" deadlines for inspection objections and HOA document reviews. If you don't object by the exact date, your earnest money goes "hard" (becomes non-refundable) and you accept the home as-is.
+                            </div>
+                        </div>
+                        <div class="flex gap-x-4">
+                            <div class="w-6 h-6 rounded-2xl bg-stone-100 text-stone-700 font-semibold flex items-center justify-center text-xs flex-shrink-0">Step 4</div>
+                            <div>
+                                <strong>Closing (Wet / Table Funding)</strong><br>
+                                CO uses "Table Funding." Everyone meets at the Title Company. You sign documents, the lender wires the funds immediately while you sit there, and you walk out with the keys that exact same day.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="inspection" class="tab-content">
+            <h2 class="text-3xl font-semibold tracking-tight mb-2">4. Instructional Inspection Guide</h2>
+            <p class="text-stone-500 mb-8">Don't just walk through the house—actively inspect it. Check off each item below. Read the "How to Check" instructions for actionable advice.</p>
+            
+            <div id="inspection-checklist" class="space-y-6"></div>
+            
+            <div class="mt-12 bg-white border border-teal-200 rounded-3xl p-8 flex flex-col md:flex-row gap-8 items-start shadow-sm">
+                <div class="text-teal-700 text-5xl flex-shrink-0">💡</div>
+                <div>
+                    <h4 class="font-semibold text-teal-800 text-xl mb-3">Pro tip: Inspection Objection & Credits</h4>
+                    <p class="text-stone-600 mb-4">Finding a major issue doesn’t have to kill the deal. Submit a written <strong>Inspection Objection</strong>. Instead of asking the seller to fix it (they will likely choose the cheapest possible contractor just to close the deal), ask for a <strong>Seller Credit</strong> toward your closing costs. This allows you to hire a professional you trust to do the repairs properly after you move in.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 text-xs py-8 text-center border-t border-stone-800">
+        Standalone interactive guide • Research verified April 2026 • Not financial or legal advice
+    </footer>
+
+    <script>
+        // Tailwind init
+        function initTailwind() {
+            return { config() { return { content: [], theme: { extend: {} } } } }
+        }
+
+        // Expanded Terms Data
+        const termsData = [
+            { term: "Fixed-rate mortgage", short: "Rate locked for entire term", example: "30-year fixed at 6.5%", pros: "Predictable payments even if rates rise", cons: "Higher initial rate than ARM", detail: "Best when you plan to stay 7+ years or rates are expected to climb." },
+            { term: "Adjustable-rate mortgage (ARM)", short: "Lower initial rate that later adjusts", example: "5/1 ARM (fixed 5 years, adjusts based on index + margin)", pros: "Cheaper monthly payment first 5–7 years", cons: "Payment shock if rates rise after teaser period", detail: "Pay attention to rate caps (e.g., 2/2/5), which limit how much it can adjust." },
+            { term: "Down payment & LTV", short: "Cash paid at closing vs. Loan-to-Value", example: "20% down on $500k = $100k (80% LTV)", pros: "Higher down = No PMI, better interest rate", cons: "Ties up cash", detail: "Lenders look closely at LTV. 3–5% down is possible for first-time buyers but requires PMI." },
+            { term: "Debt-to-Income ratio (DTI)", short: "Monthly debts ÷ gross monthly income", example: "$2,500 debts / $6,000 income = 42%", pros: "≤36% = easy approval", cons: "43–50% may require exceptions or higher rates", detail: "Front-end (housing only) ≤28–31%; back-end total ≤43% is lender sweet spot." },
+            { term: "Private Mortgage Insurance (PMI)", short: "Required when down <20%", example: "Extra $150/mo until 80% LTV", pros: "Allows lower down payment", cons: "Provides no equity to you", detail: "Conventional loans only. You can actively request removal at 80% LTV (if current on payments); automatically drops at 78%." },
+            { term: "Closing costs", short: "2–6% of purchase price", example: "Lender fees, prepaids, discount points", pros: "Can sometimes negotiate seller concessions", cons: "Extra cash needed at closing", detail: "In competitive markets, buyers usually pay all their own closing costs." },
+            { term: "Appraisal Gap Coverage", short: "Covering the difference if appraisal is low", example: "Offered $520k, appraised at $500k. You pay $20k cash.", pros: "Makes your offer incredibly strong to sellers", cons: "Requires substantial extra cash reserves", detail: "Very common requirement in bidding wars." },
+            { term: "Escalation Clause", short: "Automated bidding up to a cap", example: "Offer $500k, escalating by $2k over any higher bid up to $530k", pros: "Prevents overpaying blindly", cons: "Reveals your maximum budget to the seller", detail: "Useful in hot markets, though some listing agents refuse to accept them." },
+            { term: "Points / Rate Buydown", short: "Paying cash upfront for a lower interest rate", example: "Pay 1% of loan amount ($4k) to drop rate by 0.25%", pros: "Lowers monthly payment permanently", cons: "Takes years to break even on the upfront cost", detail: "Calculate your 'break-even' point. If you sell/refinance before then, you lose money." },
+            { term: "Contingencies", short: "Exit clauses in contract", example: "Inspection, appraisal, financing", pros: "Safeguards earnest money", cons: "Sellers prefer offers with waived contingencies", detail: "Most important protection for first-time buyers, even though market pressure tempts waiving them." }
+        ]
+
+        // Housing Types Data
+        const housingData = [
+            { type: "Single-Family Home", ownership: "Own land + house", pros: "Maximum privacy, full control, highest appreciation", cons: "Highest maintenance cost (1-2% value/year)", bestFor: "Buyers wanting space & long-term equity" },
+            { type: "Townhouse", ownership: "Own structure + small lot; shared walls", pros: "Lower price, HOA handles exterior", cons: "Noise from neighbors, restrictive HOA rules", bestFor: "First-timers wanting house feel, less upkeep" },
+            { type: "Condo", ownership: "Own unit only; shared building/land", pros: "Lowest entry price, amenities (pool/gym)", cons: "Highest HOA fees, special assessment risks", bestFor: "Urban buyers, low-maintenance lifestyle" },
+            { type: "Manufactured Home", ownership: "Leased land or permanent foundation", pros: "Cheapest entry price", cons: "Harder to finance, may depreciate like a car", bestFor: "Budget buyers in approved communities" }
+        ]
+
+        // INSTRUCTIONAL Inspection Checklist Data
+        const inspectionData = [
+            { 
+                item: "Foundation & Exterior Walls", 
+                howTo: "Walk the perimeter. Look for horizontal cracks in concrete or 'stair-step' cracks in brick. Inside, bring a marble and set it on hard floors to test for severe sloping.",
+                cost: "$5k–$50k+ (Structural Engineer required for major heaving)."
+            },
+            { 
+                item: "Plumbing & Sewer Lines (CRITICAL)", 
+                howTo: "Test water pressure by running showers and flushing toilets. <strong>Always pay $150-$300 for an independent Sewer Scope</strong> (camera down the main line) to check for tree roots or collapsed pipes.",
+                cost: "$5k–$25k+ to excavate and replace a collapsed main sewer line."
+            },
+            { 
+                item: "Roof, Gutters & Attic", 
+                howTo: "Look <em>inside</em> the gutters for excessive shingle granules (roof end-of-life). In the attic, look for black water stains or mold on the wood decking (poor ventilation or leaks).",
+                cost: "$8k–$25k for full roof replacement."
+            },
+            { 
+                item: "Environmental Hazards (Radon, Asbestos, Lead)", 
+                howTo: "<strong>Radon:</strong> Pay for a 48-hour continuous monitor test (especially in CO/Midwest). <strong>Lead/Asbestos:</strong> If the home is pre-1978, look for 9x9 floor tiles or popcorn ceilings; assume lead paint exists under newer coats.",
+                cost: "$1.5k for Radon mitigation system. Variable for asbestos abatement."
+            },
+            { 
+                item: "Electrical Panel & Outlets", 
+                howTo: "Open the breaker box door. Look for labels saying 'Federal Pacific' or 'Zinsco' (known fire hazards). Use a $10 outlet tester to check for 'bootleg' ungrounded 3-prong outlets.",
+                cost: "$2k–$5k for a new 200-Amp electrical panel."
+            },
+            { 
+                item: "HVAC (Heating & Air)", 
+                howTo: "Find the manufacturer label to check the date (systems last 15-20 years). Check the air filter—a filthy, clogged filter often indicates a severely neglected system.",
+                cost: "$6k–$15k for full furnace and AC replacement."
+            }
+        ]
+
+        // Chart instances
+        let charts = { piti: null, balance: null, amort: null, cumulative: null, rateSens: null }
+
+        // Mortgage math helpers
+        function calculateMortgage(principal, annualRate, years) {
+            const monthlyRate = annualRate / 100 / 12
+            const numPayments = years * 12
+            if (monthlyRate === 0) return principal / numPayments
+            return principal * monthlyRate * Math.pow(1 + monthlyRate, numPayments) / (Math.pow(1 + monthlyRate, numPayments) - 1)
+        }
+
+        function generateAmortization(principal, annualRate, years) {
+            const monthlyRate = annualRate / 100 / 12
+            const monthlyPI = calculateMortgage(principal, annualRate, years)
+            let balance = principal
+            const yearlyInterest = []
+            const yearlyPrincipal = []
+            const cumInterest = []
+            const cumPrincipal = []
+            let runningInterest = 0
+            let runningPrincipal = 0
+
+            for (let y = 1; y <= years; y++) {
+                let interestThisYear = 0
+                let principalThisYear = 0
+                for (let m = 0; m < 12; m++) {
+                    const interestPayment = balance * monthlyRate
+                    const principalPayment = monthlyPI - interestPayment
+                    interestThisYear += interestPayment
+                    principalThisYear += principalPayment
+                    balance = Math.max(0, balance - principalPayment)
+                }
+                yearlyInterest.push(Math.round(interestThisYear))
+                yearlyPrincipal.push(Math.round(principalThisYear))
+
+                runningInterest += interestThisYear
+                runningPrincipal += principalThisYear
+                cumInterest.push(Math.round(runningInterest))
+                cumPrincipal.push(Math.round(runningPrincipal))
+            }
+            return { yearlyInterest, yearlyPrincipal, cumInterest, cumPrincipal }
+        }
+
+        // Main calculator
+        function calculate() {
+            const price = parseFloat(document.getElementById('price').value) || 500000
+            const downPct = parseFloat(document.getElementById('downPct').value) || 20
+            const rate = parseFloat(document.getElementById('rate').value) || 6.5
+            const termYears = parseFloat(document.getElementById('term').value) || 30
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0.85
+            const insuranceAnnual = parseFloat(document.getElementById('insurance').value) || 1800
+            const hoaMonthly = parseFloat(document.getElementById('hoa').value) || 250
+            const maintenanceAnnual = parseFloat(document.getElementById('maintenance').value) || (price * 0.01)
+
+            const downAmount = price * (downPct / 100)
+            const loanAmount = price - downAmount
+            const monthlyPI = calculateMortgage(loanAmount, rate, termYears)
+            const monthlyTax = (price * (taxRate / 100)) / 12
+            const monthlyInsurance = insuranceAnnual / 12
+            const monthlyMaintenance = maintenanceAnnual / 12
+            const totalMonthly = Math.round(monthlyPI + monthlyTax + monthlyInsurance + hoaMonthly + monthlyMaintenance)
+
+            // Update summary numbers
+            document.getElementById('loanAmount').textContent = '$' + loanAmount.toLocaleString()
+            document.getElementById('monthlyPI').textContent = '$' + Math.round(monthlyPI).toLocaleString()
+            document.getElementById('totalMonthly').textContent = '$' + totalMonthly.toLocaleString()
+            document.getElementById('priceDisplay').textContent = '$' + price.toLocaleString()
+            document.getElementById('downDisplay').textContent = downPct + '%'
+            
+            // Sync maintenance box if needed
+            if (document.getElementById('maintenance').value === "") {
+                document.getElementById('maintenance').value = Math.round(price * 0.01)
+            }
+
+            // PITI+M doughnut
+            if (charts.piti) charts.piti.destroy()
+            charts.piti = new Chart(document.getElementById('pitiChart'), { 
+                type: 'doughnut', 
+                data: { 
+                    labels: ['P&I', 'Taxes', 'Insurance', 'HOA', 'Maintenance'], 
+                    datasets: [{ 
+                        data: [monthlyPI, monthlyTax, monthlyInsurance, hoaMonthly, monthlyMaintenance], 
+                        backgroundColor: ['#0f766e', '#14b8a6', '#5eead4', '#a1a1aa', '#fdba74'], 
+                        borderWidth: 4, borderColor: '#fff' 
+                    }] 
+                }, 
+                options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } } 
+            })
+
+            // Rate Sensitivity Chart (4% to 9%)
+            const ratesToTest = [4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0]
+            const rateSensitivityData = ratesToTest.map(r => Math.round(calculateMortgage(loanAmount, r, termYears)))
+            
+            if (charts.rateSens) charts.rateSens.destroy()
+            charts.rateSens = new Chart(document.getElementById('rateChart'), {
+                type: 'line',
+                data: {
+                    labels: ratesToTest.map(r => r + '%'),
+                    datasets: [{
+                        label: 'Monthly P&I',
+                        data: rateSensitivityData,
+                        borderColor: '#14b8a6',
+                        backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                        tension: 0.2,
+                        fill: true,
+                        pointBackgroundColor: ratesToTest.map(r => r === rate ? '#0f766e' : '#fff'),
+                        pointRadius: ratesToTest.map(r => r === rate ? 6 : 3)
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { ticks: { callback: v => '$' + v } } }
+                }
+            })
+
+            const amortData = generateAmortization(loanAmount, rate, termYears)
+            const yearsArray = Array.from({length: termYears}, (_, i) => `Year ${i+1}`)
+
+            // Remaining balance line
+            let runningBalance = loanAmount
+            const remainingBalance = amortData.yearlyPrincipal.map(p => { runningBalance -= p; return Math.max(0, Math.round(runningBalance)) })
+            if (charts.balance) charts.balance.destroy()
+            
+            charts.balance = new Chart(document.getElementById('balanceChart'), { type: 'line', data: { labels: yearsArray, datasets: [{ label: 'Remaining Balance', data: remainingBalance, borderColor: '#0f766e', tension: 0.3, borderWidth: 3, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => '$' + (v/1000) + 'k' } } } } })
+
+            // Yearly amort bar
+            if (charts.amort) charts.amort.destroy()
+            charts.amort = new Chart(document.getElementById('amortChart'), { type: 'bar', data: { labels: yearsArray, datasets: [{ label: 'Interest Paid', data: amortData.yearlyInterest, backgroundColor: '#fdba74' }, { label: 'Principal (Equity)', data: amortData.yearlyPrincipal, backgroundColor: '#0f766e' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => '$' + (v/1000) + 'k' } } }, plugins: { legend: { position: 'top' } } } })
+
+            // Cumulative Chart
+            if (charts.cumulative) charts.cumulative.destroy()
+            charts.cumulative = new Chart(document.getElementById('cumulativeChart'), {
+                type: 'line',
+                data: {
+                    labels: yearsArray,
+                    datasets: [
+                        { label: 'Cumulative Interest Paid', data: amortData.cumInterest, borderColor: '#fdba74', backgroundColor: 'rgba(253, 186, 116, 0.15)', tension: 0.3, borderWidth: 3, fill: true },
+                        { label: 'Cumulative Principal Paid (Equity)', data: amortData.cumPrincipal, borderColor: '#0f766e', backgroundColor: 'rgba(15, 118, 110, 0.15)', tension: 0.3, borderWidth: 3, fill: true }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { ticks: { callback: v => '$' + (v/1000) + 'k' } } }
+                }
+            })
+        }
+
+        function updatePriceLabel() {
+            const slider = document.getElementById('price')
+            document.getElementById('priceInput').value = slider.value
+        }
+
+        function syncPrice() {
+            const input = parseFloat(document.getElementById('priceInput').value)
+            if (input) document.getElementById('price').value = input
+        }
+
+        // Render Terms
+        function renderTerms() {
+            const container = document.getElementById('terms-grid')
+            container.innerHTML = ''
+            termsData.forEach(t => {
+                const card = document.createElement('div')
+                card.className = 'term-card bg-white border border-stone-200 rounded-3xl p-6 flex flex-col'
+                card.innerHTML = `
+                    <div class="font-semibold text-lg mb-1">${t.term}</div>
+                    <p class="text-teal-700 text-sm mb-3 font-medium">${t.short}</p>
+                    <p class="text-stone-600 text-sm flex-1">${t.detail}</p>
+                    <div class="mt-4 text-xs grid grid-cols-2 gap-3 pt-3 border-t border-stone-100">
+                        <div><span class="text-emerald-600 font-semibold block mb-1">Pros:</span> <span class="text-stone-500">${t.pros}</span></div>
+                        <div><span class="text-rose-600 font-semibold block mb-1">Cons:</span> <span class="text-stone-500">${t.cons}</span></div>
+                    </div>
+                    <div class="mt-3 text-xs bg-stone-50 p-2 rounded text-stone-600 border border-stone-100"><strong>Ex:</strong> ${t.example}</div>
+                `
+                container.appendChild(card)
+            })
+        }
+
+        // Render Housing Types
+        function renderHousing() {
+            const container = document.getElementById('housing-grid')
+            container.innerHTML = ''
+            housingData.forEach(h => {
+                const card = document.createElement('div')
+                card.className = 'bg-white border border-stone-200 rounded-3xl p-6 flex flex-col'
+                card.innerHTML = `
+                    <div class="font-semibold text-lg mb-2">${h.type}</div>
+                    <p class="text-stone-600 text-sm mb-4"><strong>Ownership:</strong> ${h.ownership}</p>
+                    <div class="text-xs space-y-3 flex-1">
+                        <div><span class="text-emerald-600 font-semibold block">Pros:</span> <span class="text-stone-500">${h.pros}</span></div>
+                        <div><span class="text-rose-600 font-semibold block">Cons:</span> <span class="text-stone-500">${h.cons}</span></div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-stone-100 text-xs"><span class="font-semibold text-stone-900 block mb-1">Best for:</span> <span class="text-stone-600">${h.bestFor}</span></div>
+                `
+                container.appendChild(card)
+            })
+        }
+
+        // Render Instructional Inspection Checklist
+        function renderInspectionChecklist() {
+            const container = document.getElementById('inspection-checklist')
+            container.innerHTML = ''
+            inspectionData.forEach((item, i) => {
+                const div = document.createElement('div')
+                div.className = 'checkbox-item bg-white border border-stone-200 rounded-3xl p-6 flex gap-4'
+                div.innerHTML = `
+                    <input type="checkbox" id="check-${i}" class="mt-1 accent-teal-700 w-5 h-5 flex-shrink-0 cursor-pointer">
+                    <div class="flex-1">
+                        <label for="check-${i}" class="font-bold text-lg cursor-pointer text-stone-900">${item.item}</label>
+                        <div class="mt-3 bg-stone-50 rounded-xl p-4 border border-stone-100">
+                            <p class="text-stone-700 text-sm leading-relaxed mb-3"><strong class="text-stone-900">How to Inspect:</strong> ${item.howTo}</p>
+                            <p class="text-teal-800 text-xs font-medium bg-teal-50 border border-teal-100 inline-block px-3 py-1.5 rounded-lg"><strong>Est. Replacement Risk:</strong> ${item.cost}</p>
+                        </div>
+                    </div>
+                `
+                container.appendChild(div)
+            })
+        }
+
+        // Tab switching
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav'))
+            const activeBtns = document.querySelectorAll(`button[onclick="switchTab('${tab}')"]`)
+            activeBtns.forEach(b => b.classList.add('active-nav'))
+            
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'))
+            document.getElementById(tab).classList.add('active')
+            
+            if (tab === 'finance') setTimeout(calculate, 50)
+        }
+
+        // Boot everything
+        window.onload = function() {
+            initTailwind().config()
+            renderTerms()
+            renderHousing()
+            renderInspectionChecklist()
+            calculate() // initial finance charts
+        }
+    </script>
+</body>
+</html>
